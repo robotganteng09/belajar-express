@@ -66,7 +66,7 @@ const Product = {
 
     db.query(sql, values, callback);
   },
-  
+
   deleteById: (id, callback) => {
     const sql = "DELETE FROM products WHERE id = ?";
     db.query(sql, [id], callback);
@@ -79,36 +79,3 @@ const Product = {
 module.exports = Product;
 
 
-// const supabase = require("../config/supabase");
-
-// const Product = {
-//   // CREATE
-//   create: async (data) => {
-//     return await supabase.from("first_api").insert([data]);
-//   },
-
-//   // GET ALL
-//   getAll: async () => {
-//     return await supabase
-//       .from("first_api")
-//       .select("*")
-//       .order("created_at", { ascending: false });
-//   },
-
-//   // GET BY ID
-//   getById: async (id) => {
-//     return await supabase.from("first_api").select("*").eq("id", id).single();
-//   },
-
-//   // UPDATE
-//   update: async (id, data) => {
-//     return await supabase.from("first_api").update(data).eq("id", id);
-//   },
-
-//   // DELETE
-//   delete: async (id) => {
-//     return await supabase.from("first_api").delete().eq("id", id);
-//   },
-// };
-
-// module.exports = Product;
