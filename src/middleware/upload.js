@@ -1,46 +1,20 @@
-// const multer = require("multer");
-// const path = require("path");
-
-// // lokasi & nama file
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     const uniqueName =
-//       Date.now() + "-" + Math.round(Math.random() * 1e9);
-//     cb(
-//       null,
-//       uniqueName + path.extname(file.originalname)
-//     );
-//   },
-// });
-
-// // filter hanya gambar
-// const fileFilter = (req, file, cb) => {
-//   if (
-//     file.mimetype === "image/jpeg" ||
-//     file.mimetype === "image/png" ||
-//     file.mimetype === "image/jpg"
-//   ) {
-//     cb(null, true);
-//   } else {
-//     cb(new Error("File harus gambar"), false);
-//   }
-// };
-
-// const upload = multer({
-//   storage,
-//   fileFilter,
-// });
-
-// module.exports = upload;
-
-
 const multer = require("multer");
+const path = require("path");
 
-// simpan file di memory (RAM)
-const storage = multer.memoryStorage();
+// lokasi & nama file
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueName =
+      Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      uniqueName + path.extname(file.originalname)
+    );
+  },
+});
 
 // filter hanya gambar
 const fileFilter = (req, file, cb) => {
@@ -58,9 +32,35 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: {
-    fileSize: 2 * 1024 * 1024, // 2MB (opsional)
-  },
 });
 
 module.exports = upload;
+
+
+// const multer = require("multer");
+
+// // simpan file di memory (RAM)
+// const storage = multer.memoryStorage();
+
+// // filter hanya gambar
+// const fileFilter = (req, file, cb) => {
+//   if (
+//     file.mimetype === "image/jpeg" ||
+//     file.mimetype === "image/png" ||
+//     file.mimetype === "image/jpg"
+//   ) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error("File harus gambar"), false);
+//   }
+// };
+
+// const upload = multer({
+//   storage,
+//   fileFilter,
+//   limits: {
+//     fileSize: 2 * 1024 * 1024, // 2MB (opsional)
+//   },
+// });
+
+// module.exports = upload;
