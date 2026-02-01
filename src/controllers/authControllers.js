@@ -1,37 +1,67 @@
-const User = require("../models/UserModel");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
-exports.register = (req, res) => {
-  const { username, email, password } = req.body;
+// REGISTER
+exports.register = async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: "Field wajib diisi" });
-  }
-
-  User.create([username, email, password], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: "Username dan password wajib diisi" });
     }
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password, // tanpa hash
+      },
+    });
 
     res.json({
       message: "Register berhasil",
-      userId: result.insertId,
+      userId: user.id,
     });
-  });
-};
-
-exports.getUsers = (req, res) => {
-  User.getAll((err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(rows);
-  });
-};
-
-exports.login = (req, res) => {
-  const { email, password } = req.body
-  
-  if (!email || !password) {
-    
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-}
+};
+
+// LOGIN (USERNAME + PASSWORD)
+exports.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ message: "Username dan password wajib diisi" });
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        username: username,
+        password: password,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "Username atau password salah" });
+    }
+
+    res.json({
+      message: "Login berhasil",
+      userId: user.id,
+      username: user.username,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// GET USERS
+exports.getUsers = async (req, res) => {
+  const users = await prisma.user.findMany();
+  res.json(users);
+};

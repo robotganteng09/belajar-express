@@ -1,82 +1,56 @@
-const Product = require("../models/ProductModel");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
-exports.createProduct = (req, res) => {
-  const { name, price, stock } = req.body;
-
-  if (!name || !price || !stock) {
-    return res.status(400).json({ message: "Data wajib diisi" });
+exports.createProduct = async (req, res) => {
+  try {
+    const { name, price, stock } = req.body;
+    const product = await prisma.product.create({
+      data: { name, price, stock },
+    });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  // ambil nama file gambar
-  const image = req.file ? req.file.filename : null;
-
-  Product.create(
-    { name, price, stock, image },
-    (err, result) => {
-      if (err) return res.status(500).json(err);
-
-      res.json({
-        message: "Produk berhasil ditambahkan",
-        id: result.insertId,
-        image,
-      });
-    }
-  );
-
 };
-exports.deleteProduct = (req, res) => {
-  const { id } = req.params;
 
-  Product.deleteById(id, (err) => {
-    if (err) {
-      return res.status(500).json({ message: "Gagal menghapus data" });
-    }
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await prisma.product.findMany();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { name, price, stock } = req.body;
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: { name, price, stock },
+    });
+
+    res.json({
+      message: "Produk berhasil diupdate",
+      data: product,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    await prisma.product.delete({
+      where: { id },
+    });
+
     res.json({ message: "Produk berhasil dihapus" });
-  });
-};
-
-exports.getProducts = (req, res) => {
-  Product.getAll((err, results) => {
-    if (err) {
-      return res.status(500).json({ message: "Gagal mengambil data" });
-    }
-    res.json(results);
-  });
-};
-
-exports.updateProduct = (req, res) => {
-  const { id } = req.params;
-  const { name, price, stock } = req.body;
-
-  // ambil image jika ada
-  const image = req.file ? req.file.filename : null;
-
-  // validasi: minimal salah satu ada
-  if (!name && !price && !stock && !image) {
-    return res.status(400).json({ message: "Data tidak boleh kosong" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  const updateData = {
-    name,
-    price,
-    stock,
-    image,
-  };
-
-  Product.update(id, updateData, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: "Gagal update data" });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Produk tidak ditemukan" });
-    }
-
-    res.json({ message: "Produk berhasil diupdate" });
-  });
-
-  
 };
-
-
