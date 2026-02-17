@@ -1,35 +1,38 @@
-const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // REGISTER
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    console.log("BODY:", req.body); // 🔥 DEBUG WAJIB
 
-    if (!username || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username dan password wajib diisi" });
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "Username, email, dan password wajib diisi",
+      });
     }
 
     const user = await prisma.user.create({
       data: {
         username,
-        password, // tanpa hash
+        email, // ✅ BUKAN String
+        password,
       },
     });
 
-    res.json({
+    res.status(201).json({
       message: "Register berhasil",
       userId: user.id,
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 };
-
 // LOGIN (USERNAME + PASSWORD)
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -61,7 +64,7 @@ exports.login = async (req, res) => {
 };
 
 // GET USERS
-exports.getUsers = async (req, res) => {
+export const getUsers= async (req, res) => {
   const users = await prisma.user.findMany();
   res.json(users);
 };

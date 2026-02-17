@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const SiswaController = {
-  getAllSiswa: async (req, res) => {
+export const kelasController = {
+  getAllKelas: async (req, res) => {
     try {
-      const results = await prisma.siswa.findMany();
+      const results = await prisma.kelas.findMany();
 
       res.status(200).json({
         success: true,
@@ -13,11 +13,9 @@ export const SiswaController = {
     } catch (err) {
       res.status(500).json({
         success: false,
-        message: "Gagal ambil data siswa",
+        message: "Gagal ambil data kelas",
         error: err.message,
       });
     }
   },
 };
-
-// module.exports = SiswaController;

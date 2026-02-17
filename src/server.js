@@ -1,29 +1,22 @@
-require("dotenv").config();
-const express = require("express");
+import express from "express";
+import siswaRoutes from "./routes/siswaRoutes.js";
+import guruRoutes from "./routes/guruRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
+import kelasRoute from "./routes/kelasRoutes.js"
+import productRoute from "./routes/productRoutes.js"
+
+
 const app = express();
-const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-const productRoutes = require("./routes/productRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const path = require("path"); // ⬅️ TAMBAHKAN INI
-
-
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
-app.use(express.urlencoded({ extended: true })); 
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes); 
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", paymentRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+app.use("/api",siswaRoutes);
+app.use("/api", guruRoutes);
+app.use("/api",authRoutes)
+app.use("/api", kelasRoute)
+app.use("/api/products",productRoute)
 
-
-app.use("/api/siswa", require("./routes/siswaRoutes"));
-
-
-
-app.listen(PORT, () => {
-  console.log(` Server berjalan di http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log("Server running di http://localhost:3000");
 });

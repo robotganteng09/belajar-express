@@ -1,7 +1,8 @@
-const express = require("express");
+import express from "express";
+import { SiswaController } from "../controllers/SiswaController.js";
+
 const router = express.Router();
-const SiswaController = require("../controllers/siswaController");
 
-router.get("/", SiswaController.getAllSiswa);
+router.get("/siswa", SiswaController.getAllSiswa);
 
-module.exports = router;
+export default router;

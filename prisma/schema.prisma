@@ -10,8 +10,29 @@ generator client {
 model Siswa {
   id     Int    @id @default(autoincrement())
   nama   String
-  kelas  String
   umur   Int?
+
+  kelasId Int
+  kelas   Kelas   @relation(fields: [kelasId], references: [id])
+}
+
+model Guru{
+  id Int @id @default(autoincrement())
+  nama String
+
+   kelas  Kelas[]   // 1 guru bisa mengajar banyak kelas
+  
+}
+
+
+model Kelas {
+  id      Int     @id @default(autoincrement())
+  nama    String
+
+  guruId  Int
+  guru    Guru    @relation(fields: [guruId], references: [id])
+
+  siswa   Siswa[] // 1 kelas punya banyak siswa
 }
 
 model User {
@@ -27,5 +48,6 @@ model Product {
   name      String
   price     Int
   stock     Int
+  photo     String
   createdAt DateTime @default(now())
 }
