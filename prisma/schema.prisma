@@ -35,11 +35,18 @@ model Kelas {
   siswa   Siswa[] // 1 kelas punya banyak siswa
 }
 
+enum Role {
+  GURU
+  WALI_MURID
+}
+
+
 model User {
   id        Int      @id @default(autoincrement())
   username  String
   email     String   @unique
   password  String
+  role     Role  @default(WALI_MURID)
   createdAt DateTime @default(now())
 }
 
